@@ -1,0 +1,7 @@
+out/
+__pycache__/
+*.pyc
+.DS_Store
+out_test_*/
+tmp*/
+scripts/phrase_sources.local.txt
