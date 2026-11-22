@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-"""本地覆盖率统计（纯标准库，CI 用 coverage.py；此脚本便于本地快速查看）。"""
+"""本地覆盖率统计（纯标准库，CI 用 coverage.py；此脚本便于本地快速查看）。
+
+用法：
+    python scripts/coverage_local.py            # 汇总
+    python scripts/coverage_local.py --missing  # 附未覆盖行号
+"""
 
 import ast
 import os
@@ -21,6 +26,7 @@ def stmt_lines(path):
 
 
 def main():
+    show_missing = "--missing" in sys.argv
     executed = {}
     target = os.path.abspath(PKG) + os.sep
 
@@ -32,14 +38,14 @@ def main():
         return tracer
 
     sys.path.insert(0, ROOT)
-    loader = unittest.TestLoader()
     tests_dir = os.path.join(ROOT, "tests")
     sys.path.insert(0, tests_dir)
-    suite = loader.discover(tests_dir, top_level_dir=tests_dir)
-    runner = unittest.TextTestRunner(verbosity=0)
     old = sys.gettrace()
     sys.settrace(tracer)
     try:
+        loader = unittest.TestLoader()
+        suite = loader.discover(tests_dir, top_level_dir=tests_dir)
+        runner = unittest.TextTestRunner(verbosity=0)
         result = runner.run(suite)
     finally:
         sys.settrace(old)
@@ -52,12 +58,16 @@ def main():
         lines = stmt_lines(path)
         if not lines:
             continue
-        cov = len(lines & executed.get(os.path.abspath(path), set()))
-        rows.append((name, cov, len(lines), 100.0 * cov / len(lines)))
+        hit = executed.get(os.path.abspath(path), set())
+        cov = len(lines & hit)
+        miss = sorted(lines - hit)
+        rows.append((name, cov, len(lines), 100.0 * cov / len(lines), miss))
         total_cov += cov
         total_all += len(lines)
-    for name, cov, tot, pct in rows:
+    for name, cov, tot, pct, miss in rows:
         print("%-18s %4d/%-4d %5.1f%%" % (name, cov, tot, pct))
+        if show_missing and miss:
+            print("    missing:", ",".join(str(x) for x in miss[:80]))
     print("-" * 40)
     print("TOTAL %d/%d = %.1f%%" % (total_cov, total_all, 100.0 * total_cov / max(1, total_all)))
     return 0 if result.wasSuccessful() else 1

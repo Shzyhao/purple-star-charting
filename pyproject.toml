@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "purple-star-charting"
-version = "0.8.0"
+version = "0.8.1"
 description = "紫微斗数排盘与白话解读（传统术数文化学习工具）"
 readme = "README.md"
 requires-python = ">=3.9"
