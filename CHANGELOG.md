@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.4.0
+
+### 新增
+- 流年诸星：流禄、流羊、流陀、流马、流魁、流钺（流昌曲因流派差异暂不内置）
+- 流年完整十二宫排盘（流年命宫起十二宫，叠加本命星曜）
+- 宫干四化（飞星）：十二宫宫干各自起四化并列出飞入宫位
+- 格局扩充：13 类 -> 28 类
+- 流派开关：--school-sihua ben/common、--school-huoling year/hour、--school-daxian guardian/ming
+- 真太阳时：--city / --lon，经度差 + 均时差校正
+- 闰月模式：--leap-mode next/half
+- JSON 输出：--json-out
+- 批量排盘：--batch CSV，输出 batch_summary.csv
+- 新增 12 个测试（总测试数 44）
+
 ## 0.3.0
 
 ### 新增

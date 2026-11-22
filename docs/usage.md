@@ -37,6 +37,13 @@
 | --name2 / --gender2 / --solar2 / --time2 / --lunar-gz2 / --month2 / --day2 / --hour2 | 第二人资料 |
 | --out | 输出目录（默认 out） |
 | --miaowang | 自备庙旺表 JSON 路径（可选，格式见 docs/data/miaowang-schema.md） |
+| --city / --lon | 出生城市或经度，用于真太阳时校正 |
+| --leap-mode | next（闰月按次月）/ half（前半月本月、后半月次月） |
+| --school-sihua | ben（本书版本）/ common（通行本） |
+| --school-huoling | year（火铃按年支）/ hour（按年支起宫再顺数生时） |
+| --school-daxian | guardian（父母/兄弟宫起）/ ming（命宫起） |
+| --json-out | 输出 JSON 到指定路径 |
+| --batch | 批量排盘 CSV（列：name,gender,solar,time,year） |
 | --png | 额外生成 PNG 命盘图 |
 | --no-render | 不生成图 |
 

@@ -4,7 +4,7 @@ import json
 import os
 
 from .consts import (GAN, ZHI, GAN_IDX, ZHI_IDX, WUHU, NAYIN, JU, JU_NAME,
-                     ZIWEI_SERIES, TIANFU_SERIES, SIHUA, LUCUN, KUIYUE, TIANMA,
+                     ZIWEI_SERIES, TIANFU_SERIES, SIHUA, SIHUA_TABLES, LUCUN, KUIYUE, TIANMA,
                      HUOLING, LING, XIAOXIAN, CHANGSHENG_START, CHANGSHENG_NAMES,
                      BOSHI_NAMES, PALACES, MINGZHU, SHENZHU)
 
@@ -34,7 +34,7 @@ def ganzhi_index(year_gz):
     raise ValueError("invalid ganzhi: " + year_gz)
 
 
-def chart(gender, year_gz, month, day, hour_idx, leap_month=False, late_zi="same"):
+def chart(gender, year_gz, month, day, hour_idx, leap_month=False, late_zi="same", school=None):
     """排盘。
 
     gender: "男" / "女"
@@ -45,6 +45,8 @@ def chart(gender, year_gz, month, day, hour_idx, leap_month=False, late_zi="same
     leap_month: 是否闰月（闰月按次月起命身）
     late_zi: "same"/"next" 晚子时归属
     """
+    school = school or {}
+    sihua_table = SIHUA_TABLES.get(school.get("sihua", "ben"), SIHUA)
     notes = []
     if leap_month:
         month = month % 12 + 1
@@ -91,8 +93,12 @@ def chart(gender, year_gz, month, day, hour_idx, leap_month=False, late_zi="same
     put("擎羊", add(lc, 1))
     put("陀羅", add(lc, -1))
     put("天馬", TIANMA[yz])
-    put("火星", HUOLING[yz])
-    put("鈴星", LING[yz])
+    if school.get("huoling") == "hour":
+        put("火星", add(HUOLING[yz], hour_idx))
+        put("鈴星", add(LING[yz], hour_idx))
+    else:
+        put("火星", HUOLING[yz])
+        put("鈴星", LING[yz])
     put("地劫", add("亥", hour_idx))
     put("地空", add("亥", -hour_idx))
     put("紅鸞", add("卯", -z))
@@ -107,8 +113,8 @@ def chart(gender, year_gz, month, day, hour_idx, leap_month=False, late_zi="same
     put("天虛", add("午", z))
     put("龍池", add("辰", z))
     put("鳳閣", add("戌", -z))
-    hua = {star: h for h, star in SIHUA[yg].items()}
-    for h, star in SIHUA[yg].items():
+    hua = {star: h for h, star in sihua_table[yg].items()}
+    for h, star in sihua_table[yg].items():
         hua[star] = h
     palaces = {}
     for i, pname in enumerate(PALACES):
@@ -121,7 +127,10 @@ def chart(gender, year_gz, month, day, hour_idx, leap_month=False, late_zi="same
     yang_gan = g % 2 == 0
     male = gender == "男"
     forward = (yang_gan and male) or ((not yang_gan) and (not male))
-    start_off = -11 if forward else -1
+    if school.get("daxian") == "ming":
+        start_off = 0
+    else:
+        start_off = -11 if forward else -1
     daxian = {}
     for k in range(12):
         pos = add(ming_z, start_off + (k if forward else -k))
@@ -130,7 +139,7 @@ def chart(gender, year_gz, month, day, hour_idx, leap_month=False, late_zi="same
     daxian_sihua = {}
     for dz, d in daxian.items():
         gan = GAN[(yin_gan + (ZHI_IDX[dz] - 2)) % 10]
-        daxian_sihua[dz] = {"gan": gan, "hua": SIHUA.get(gan, {})}
+        daxian_sihua[dz] = {"gan": gan, "hua": sihua_table.get(gan, {})}
     xx_start = XIAOXIAN[yz]
     xiaoxian = {}
     for age in range(1, 121):
@@ -162,9 +171,20 @@ def doujun(year_zhi, birth_month, birth_hour_idx):
 def liunian(ch, year_gz, age=None):
     """流年：流年命宫、流年四化落宫、大限/小限叠加。"""
     yg, yz = year_gz[0], year_gz[1]
-    res = {"year_gz": year_gz, "ming": yz, "hua": SIHUA[yg]}
+    from .liunian_stars import liunian_stars, place as _place
+    sihua_table = ch.get("sihua_table", SIHUA)
+    res = {"year_gz": year_gz, "ming": yz, "hua": sihua_table.get(yg, {})}
+    res["stars"] = liunian_stars(year_gz)
+    res["star_palaces"], _ = _place(ch, year_gz)
+    ln_palaces = []
+    for i, pname in enumerate(PALACES):
+        zpos = add(yz, -i)
+        base_palace = [k for k, v in ch["palaces"].items() if v["zhi"] == zpos][0]
+        ln_palaces.append({"palace": pname, "zhi": zpos, "base": base_palace,
+                           "stars": ch["palaces"][base_palace]["stars"]})
+    res["palaces"] = ln_palaces
     loc = {}
-    for h, star in SIHUA[yg].items():
+    for h, star in sihua_table.get(yg, {}).items():
         for pname, info in ch["palaces"].items():
             if star in info["stars"]:
                 loc[h] = {"star": star, "palace": pname, "zhi": info["zhi"]}

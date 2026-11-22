@@ -73,14 +73,117 @@ HUA_TEXT = {"祿": "顺遂、增益、财禄与机会（入何宫，何宫得利
             "科": "名声、文书、贵人、声誉（入何宫，何宫有名）",
             "忌": "阻碍、牵挂、破耗与压力（入何宫，何宫需留意）"}
 GEJU = [
-    ("君臣慶會", "紫微坐命，左辅右弼文昌文曲天魁天钺会照三方"), ("府相朝垣", "天府天相会照命宫三方"),
-    ("日月照璧", "太阳太阴分居旺地、会照命宫"), ("日月夾命", "太阳太阴夹命宫"),
-    ("左右夾命", "左辅右弼夹命宫"), ("昌曲夾命", "文昌文曲夹命宫"),
-    ("羊陀夾命", "擎羊陀罗夹命宫（凶格）"), ("火貪格", "贪狼与火星同宫或会照"),
-    ("鈴貪格", "贪狼与铃星同宫或会照"), ("馬頭帶箭", "命宫在午，擎羊同宫"),
-    ("科權祿拱", "化禄化权化科会照命宫三方"), ("刑囚夾印", "擎羊与廉贞夹天相（凶格）"),
+    ("君臣慶會", "紫微坐命，左辅右弼文昌文曲天魁天钺会照三方"),
+    ("府相朝垣", "天府天相会照命宫三方"),
+    ("日月照璧", "太阳太阴分居旺地、会照命宫"),
+    ("日月夾命", "太阳太阴夹命宫"),
+    ("左右夾命", "左辅右弼夹命宫"),
+    ("昌曲夾命", "文昌文曲夹命宫"),
+    ("羊陀夾命", "擎羊陀罗夹命宫（凶格）"),
+    ("空劫夾命", "地空地劫夹命宫（凶格）"),
+    ("火貪格", "贪狼与火星同宫或会照"),
+    ("鈴貪格", "贪狼与铃星同宫或会照"),
+    ("馬頭帶箭", "命宫在午，擎羊同宫"),
+    ("科權祿拱", "化禄化权化科会照命宫三方"),
     ("殺破狼", "七杀破军贪狼会照命宫三方"),
+    ("紫府同宮", "紫微天府同宫"),
+    ("紫府朝垣", "紫微天府会照命宫三方"),
+    ("武貪同行", "武曲贪狼同宫"),
+    ("雙祿交流", "禄存与化禄星同会三方"),
+    ("祿馬交馳", "禄存与天马同会三方"),
+    ("巨日同宮", "巨门太阳同宫"),
+    ("陽梁昌祿", "太阳天梁文昌禄存会照三方"),
+    ("文星暗拱", "文昌文曲在命宫两侧相夹"),
+    ("紫殺同宮", "紫微七杀同宫"),
+    ("紫破同宮", "紫微破军同宫"),
+    ("廉殺同宮", "廉贞七杀同宫"),
+    ("武相同宮", "武曲天相同宫"),
+    ("命裡逢空", "地空地劫入命"),
+    ("天羅地網", "命宫在辰或戌"),
+    ("機月同梁", "天机太阴天同天梁会照三方"),
+    ("極向離明", "紫微坐命于午"),
 ]
+
+MAIN_STARS = ("紫微", "天機", "太陽", "武曲", "天同", "廉貞", "天府", "太陰",
+              "貪狼", "巨門", "天相", "天梁", "七殺", "破軍")
+
+
+def _palace_with(ch, *stars):
+    for pname in PALACES:
+        s = set(_stars(ch, pname))
+        if all(x in s for x in stars):
+            return pname
+    return None
+
+
+def detect_geju(ch):
+    ming = set(_stars(ch, "命宮"))
+    tri = _tri(ch)
+    flank = _flank(ch)
+    res = []
+    def pair(a, b):
+        return _palace_with(ch, a, b) is not None
+    if "紫微" in ming and len({"左輔", "右弼", "文昌", "文曲", "天魁", "天鉞"} & tri) >= 3:
+        res.append("君臣慶會")
+    if {"天府", "天相"} & ming and len({"天府", "天相"} & tri) >= 2:
+        res.append("府相朝垣")
+    if {"太陽", "太陰"} <= tri:
+        res.append("日月照璧")
+    if {"太陽", "太陰"} <= flank:
+        res.append("日月夾命")
+    if {"左輔", "右弼"} <= flank:
+        res.append("左右夾命")
+    if {"文昌", "文曲"} <= flank:
+        res.append("昌曲夾命")
+    if {"擎羊", "陀羅"} <= flank:
+        res.append("羊陀夾命")
+    if {"地空", "地劫"} <= flank:
+        res.append("空劫夾命")
+    if "貪狼" in tri and "火星" in tri:
+        res.append("火貪格")
+    if "貪狼" in tri and "鈴星" in tri:
+        res.append("鈴貪格")
+    if ch["ming_zhi"] == "午" and "擎羊" in ming:
+        res.append("馬頭帶箭")
+    if len([x for x in ch["hua"] if x in tri]) >= 3:
+        res.append("科權祿拱")
+    if {"七殺", "破軍", "貪狼"} <= tri:
+        res.append("殺破狼")
+    if pair("紫微", "天府"):
+        res.append("紫府同宮")
+    if {"紫微", "天府"} <= tri and "紫微" not in ming:
+        res.append("紫府朝垣")
+    if pair("武曲", "貪狼"):
+        res.append("武貪同行")
+    if "祿存" in tri and any(v in tri for v in ch["hua"].values()):
+        res.append("雙祿交流")
+    if "祿存" in tri and "天馬" in tri:
+        res.append("祿馬交馳")
+    if pair("巨門", "太陽"):
+        res.append("巨日同宮")
+    if {"太陽", "天梁", "文昌", "祿存"} <= tri:
+        res.append("陽梁昌祿")
+    if {"文昌", "文曲"} <= flank:
+        res.append("文星暗拱")
+    if pair("紫微", "七殺"):
+        res.append("紫殺同宮")
+    if pair("紫微", "破軍"):
+        res.append("紫破同宮")
+    if pair("廉貞", "七殺"):
+        res.append("廉殺同宮")
+    if pair("武曲", "天相"):
+        res.append("武相同宮")
+    if {"地空", "地劫"} & ming:
+        res.append("命裡逢空")
+    if ch["ming_zhi"] in ("辰", "戌"):
+        res.append("天羅地網")
+    if {"天機", "太陰", "天同", "天梁"} <= tri:
+        res.append("機月同梁")
+    if "紫微" in ming and ch["ming_zhi"] == "午":
+        res.append("極向離明")
+    return res
+
+
 ORDER = ["命宮", "兄弟", "夫妻", "子女", "財帛", "疾厄", "遷移", "奴僕", "官祿", "田宅", "福德", "父母"]
 
 
@@ -98,38 +201,6 @@ def _tri(ch):
 def _flank(ch):
     i = ORDER.index("命宮")
     return set(_stars(ch, ORDER[(i - 1) % 12])) | set(_stars(ch, ORDER[(i + 1) % 12]))
-
-
-def detect_geju(ch):
-    ming = set(_stars(ch, "命宮"))
-    tri = _tri(ch)
-    flank = _flank(ch)
-    res = []
-    if "紫微" in ming and len({"左輔", "右弼", "文昌", "文曲", "天魁", "天鉞"} & tri) >= 3:
-        res.append("君臣慶會")
-    if {"天府", "天相"} & ming and len({"天府", "天相"} & tri) >= 2:
-        res.append("府相朝垣")
-    if {"太陽", "太陰"} <= tri:
-        res.append("日月照璧")
-    if {"太陽", "太陰"} <= flank:
-        res.append("日月夾命")
-    if {"左輔", "右弼"} <= flank:
-        res.append("左右夾命")
-    if {"文昌", "文曲"} <= flank:
-        res.append("昌曲夾命")
-    if {"擎羊", "陀羅"} <= flank:
-        res.append("羊陀夾命")
-    if "貪狼" in tri and "火星" in tri:
-        res.append("火貪格")
-    if "貪狼" in tri and "鈴星" in tri:
-        res.append("鈴貪格")
-    if ch["ming_zhi"] == "午" and "擎羊" in ming:
-        res.append("馬頭帶箭")
-    if len([x for x in ch["hua"] if x in tri]) >= 3:
-        res.append("科權祿拱")
-    if {"七殺", "破軍", "貪狼"} <= tri:
-        res.append("殺破狼")
-    return res
 
 
 def analyze(ch, ln=None, miaowang=None):
@@ -249,7 +320,12 @@ def analyze(ch, ln=None, miaowang=None):
         loc = [pn for pn in ORDER if star in _stars(ch, pn)]
         A("- 化%s：%s —— %s%s" % (h, star, HUA_TEXT[h], ("；落" + (loc[0] if loc else "?")) if loc else ""))
     A("")
-    A("## 八、大限")
+    A("## 八、飞星（宫干四化）")
+    A("")
+    from . import fly as _fly
+    A(_fly.feixing_md(ch, ch.get("sihua_table")))
+    A("")
+    A("## 九、大限")
     A("")
     A("起运：%s，%s起限。" % (ch["ju"], "顺行" if ch["forward"] else "逆行"))
     A("")
@@ -258,7 +334,7 @@ def analyze(ch, ln=None, miaowang=None):
         A("- 第%d限 %d-%d岁：%s（%s宫）" % (d["order"], d["from"], d["to"], pname, z))
     A("")
     if ln:
-        A("## 九、流年（%s）" % ln["year_gz"])
+        A("## 十、流年（%s）" % ln["year_gz"])
         A("")
         A("- 流年命宫：%s宫" % ln["ming"])
         A("- 流年四化：")
@@ -273,6 +349,17 @@ def analyze(ch, ln=None, miaowang=None):
             A("- 大限四化（%s干）：%s" % (ln["daxian_sihua"]["gan"], "；".join("%s化%s" % (v, k) for k, v in ln["daxian_sihua"]["hua"].items())))
         if "xiaoxian" in ln:
             A("- 小限：%s宫" % ln["xiaoxian"])
+        if ln.get("stars"):
+            A("- 流年诸星：" + "、".join("%s在%s" % (to_simp(k), v) for k, v in ln["stars"].items()))
+        if ln.get("palaces"):
+            A("")
+            A("### 流年十二宫")
+            A("")
+            A("| 流年宫位 | 地支 | 本命宫位 | 星曜 |")
+            A("|---|---|---|---|")
+            for row in ln["palaces"]:
+                A("| %s | %s | %s | %s |" % (to_simp(row["palace"]), row["zhi"], to_simp(row["base"]),
+                                             "、".join(to_simp(x) for x in row["stars"]) or "空宫"))
         A("")
     A("---")
     A("")
