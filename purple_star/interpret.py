@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """解读层：全部为项目自撰的白话说明，不含任何原文；仅给出页码级引用。"""
 from .consts import PALACES, ZHI, PALACES_SIMPLE, to_simp
+from . import strength
 
 STAR_TEXT = {
     "紫微": {"hua": "土，帝座，官禄主", "xing": "尊贵、稳重、要强、好面子，有领导欲",
@@ -131,7 +132,7 @@ def detect_geju(ch):
     return res
 
 
-def analyze(ch, ln=None):
+def analyze(ch, ln=None, miaowang=None):
     L = []
     A = L.append
     A("# 紫微斗数命盘解析")
@@ -155,15 +156,17 @@ def analyze(ch, ln=None):
     A("")
     A("## 二、十二宫")
     A("")
-    A("| 宫位 | 地支 | 星曜 | 身宫 |")
-    A("|---|---|---|---|")
+    A("| 宫位 | 地支 | 星曜 | 强弱(五行) | 身宫 |")
+    A("|---|---|---|---|---|")
     for pname in ORDER:
         info = ch["palaces"][pname]
         stars = []
         for s in info["stars"]:
             h = ch["hua"].get(s, "")
             stars.append(s + ("(化" + h + ")" if h else ""))
-        A("| %s | %s | %s | %s |" % (PALACES_SIMPLE.get(pname, pname), info["zhi"], "、".join(to_simp(s) for s in stars) if stars else "（空宫）", "★" if pname == ch["shen_palace"] else ""))
+        ps = strength.palace_strength(ch, pname)
+        sl = ("%s(%s)" % (ps["level"], ps["avg"])) if ps["avg"] is not None else "空宫"
+        A("| %s | %s | %s | %s | %s |" % (PALACES_SIMPLE.get(pname, pname), info["zhi"], "、".join(to_simp(s) for s in stars) if stars else "（空宫）", sl, "★" if pname == ch["shen_palace"] else ""))
     A("")
     A("## 三、命宫")
     A("")
@@ -184,17 +187,47 @@ def analyze(ch, ln=None):
         A("")
     A("身宫在%s：%s。" % (ch["shen_palace"], PALACE_TEXT.get(ch["shen_palace"], "")))
     A("")
-    A("## 四、十二宫概览")
+    sf = strength.sanfang(ch)
+    A("## 四、强弱与三方四正（五行生克法）")
+    A("")
+    A("> 说明：本工具不内置任何版本的庙旺表；强弱按星曜五行与宫位五行的生克关系推算：宫生星=得生(强)、比和=旺、星克宫=耗、星生宫=泄、宫克星=受制(弱)。")
+    A("")
+    for st_ in sf["stats"]:
+        if st_["avg"] is None:
+            A("- %s（%s）：空宫，借对宫看。" % (to_simp(st_["palace"]), st_["zhi"]))
+        else:
+            A("- %s（%s）：%s（均分 %s），主星：%s" % (
+                to_simp(st_["palace"]), st_["zhi"], st_["level"], st_["avg"],
+                "、".join("%s%s" % (to_simp(r["star"]), r["level"]) for r in st_["rows"] if r["star"] in strength.MAIN_STARS)))
+    A("")
+    A("- 三方四正综合：%s（均分 %s）；吉星：%s；煞星：%s。" % (
+        sf["level"] or "—", sf["avg"] if sf["avg"] is not None else "—",
+        "、".join(to_simp(x) for x in sf["ji"]) or "无",
+        "、".join(to_simp(x) for x in sf["sha"]) or "无"))
+    if miaowang:
+        A("- 已加载用户自备庙旺表：报告中附星曜庙旺等级（仅供参考，不同版本差异较大）。")
+    A("")
+    A("## 五、十二宫概览")
     A("")
     for pname in ORDER:
         info = ch["palaces"][pname]
         stars = info["stars"]
-        A("- **%s（%s）**：%s —— %s" % (pname, info["zhi"], "、".join(to_simp(s) for s in stars) if stars else "空宫", PALACE_TEXT[pname]))
+        ps = strength.palace_strength(ch, pname)
+        extra = ("（强弱：%s %s）" % (ps["level"], ps["avg"])) if ps["avg"] is not None else "（空宫）"
+        A("- **%s（%s）**：%s —— %s%s" % (pname, info["zhi"], "、".join(to_simp(s) for s in stars) if stars else "空宫", PALACE_TEXT[pname], extra))
+        if miaowang:
+            grades = []
+            for x in stars:
+                g = strength.miaowang_grade(miaowang, x, info["zhi"])
+                if g:
+                    grades.append("%s:%s" % (to_simp(x), g))
+            if grades:
+                A("  - 庙旺（自备表）：%s" % "、".join(grades))
         for s in stars:
             if s in STAR_TEXT:
                 A("  - %s：%s" % (s, STAR_TEXT[s]["xing"]))
     A("")
-    A("## 五、格局识别")
+    A("## 六、格局识别")
     A("")
     gjs = detect_geju(ch)
     if gjs:
@@ -203,7 +236,7 @@ def analyze(ch, ln=None):
     else:
         A("未命中常见吉格/凶格（仅按常见格初筛，非定论）。")
     A("")
-    A("## 六、本命四化")
+    A("## 七、本命四化")
     A("")
     A("生年干（%s）四化：" % ch["year_ganzhi"][0])
     for h in "祿權科忌":
@@ -216,7 +249,7 @@ def analyze(ch, ln=None):
         loc = [pn for pn in ORDER if star in _stars(ch, pn)]
         A("- 化%s：%s —— %s%s" % (h, star, HUA_TEXT[h], ("；落" + (loc[0] if loc else "?")) if loc else ""))
     A("")
-    A("## 七、大限")
+    A("## 八、大限")
     A("")
     A("起运：%s，%s起限。" % (ch["ju"], "顺行" if ch["forward"] else "逆行"))
     A("")
@@ -225,7 +258,7 @@ def analyze(ch, ln=None):
         A("- 第%d限 %d-%d岁：%s（%s宫）" % (d["order"], d["from"], d["to"], pname, z))
     A("")
     if ln:
-        A("## 八、流年（%s）" % ln["year_gz"])
+        A("## 九、流年（%s）" % ln["year_gz"])
         A("")
         A("- 流年命宫：%s宫" % ln["ming"])
         A("- 流年四化：")

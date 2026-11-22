@@ -6,6 +6,7 @@
 - chart.py：排盘核心（纯函数，输出 JSON 可序列化结果）；
 - interpret.py：白话解读（自撰文本 + 规则化生成）；
 - render.py：命盘图（SVG 为主，PNG 可选）；
+- strength.py：星曜强弱（五行生克法）与可选庙旺表加载；
 - cli.py：命令行入口。
 
 ## 2. 设计原则

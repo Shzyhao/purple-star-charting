@@ -5,7 +5,7 @@ import os
 import sys
 
 from .chart import chart, gz_of_year, ganzhi_index, liunian
-from . import interpret, render, hepan, topics, liuyue
+from . import interpret, render, hepan, topics, liuyue, strength
 from .consts import ZHI
 
 GAN = "甲乙丙丁戊己庚辛壬癸"
@@ -93,6 +93,7 @@ def main(argv=None):
     ap.add_argument("--day2", type=int)
     ap.add_argument("--hour2")
     ap.add_argument("--leap2", action="store_true")
+    ap.add_argument("--miaowang", help="自备庙旺表 JSON 路径（可选）")
     ap.add_argument("--out", default="out")
     ap.add_argument("--png", action="store_true")
     ap.add_argument("--no-render", action="store_true")
@@ -102,7 +103,8 @@ def main(argv=None):
     if args.year:
         age = (ganzhi_index(gz_of_year(args.year)) - ganzhi_index(ch["year_ganzhi"])) % 60 + 1
         ln = liunian(ch, gz_of_year(args.year), age)
-    md = interpret.analyze(ch, ln)
+    miaowang = strength.load_miaowang(args.miaowang) if args.miaowang else None
+    md = interpret.analyze(ch, ln, miaowang=miaowang)
     if args.topic:
         names = ["marriage", "career", "wealth", "health"] if args.topic == "all" else [args.topic]
         for n in names:

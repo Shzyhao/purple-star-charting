@@ -36,6 +36,7 @@
 | --hepan | 与第二人合盘 |
 | --name2 / --gender2 / --solar2 / --time2 / --lunar-gz2 / --month2 / --day2 / --hour2 | 第二人资料 |
 | --out | 输出目录（默认 out） |
+| --miaowang | 自备庙旺表 JSON 路径（可选，格式见 docs/data/miaowang-schema.md） |
 | --png | 额外生成 PNG 命盘图 |
 | --no-render | 不生成图 |
 
