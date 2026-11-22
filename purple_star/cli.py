@@ -7,7 +7,7 @@ import os
 import sys
 
 from .chart import chart, gz_of_year, ganzhi_index, liunian
-from . import interpret, render, hepan, topics, liuyue, strength, fly
+from . import interpret, render, hepan, topics, liuyue, strength, fly, timing, fortune
 from .consts import ZHI
 
 GAN = "甲乙丙丁戊己庚辛壬癸"
@@ -134,7 +134,17 @@ def run_one(args, out_dir=None):
     miaowang = strength.load_miaowang(args.miaowang) if getattr(args, "miaowang", None) else None
     md = interpret.analyze(ch, ln, miaowang=miaowang)
     if getattr(args, "topic", None):
-        names = ["marriage", "career", "wealth", "health"] if args.topic == "all" else [args.topic]
+        names = []
+        for t in str(args.topic).split(","):
+            t = t.strip()
+            if not t:
+                continue
+            if t == "all":
+                names = list(topics.TOPICS.keys())
+                break
+            if t not in topics.TOPICS:
+                raise SystemExit("未知专题：%s（可选：%s）" % (t, ", ".join(topics.TOPICS)))
+            names.append(t)
         for n in names:
             md += "\n\n" + topics.analyze_topic(n, ch, ln)
     if getattr(args, "liuyue", None):
@@ -143,6 +153,17 @@ def run_one(args, out_dir=None):
         y, m, d = [int(x) for x in args.date.split("-")]
         ly, lm, lday, _leap = solar_to_lunar(y, m, d)
         md += "\n\n" + liuyue.liuri_md(ch, ly, lm, lday)
+    if getattr(args, "timing", None):
+        if not getattr(args, "year", None):
+            raise SystemExit("择时需要 --year（流年）与 --lunar-month（农历月）")
+        lm_ = getattr(args, "lunar_month", None) or 1
+        md += "\n\n" + timing.timing_md(ch, args.year, lm_, args.timing)
+    if getattr(args, "fortune", None):
+        try:
+            a, b = [int(x) for x in args.fortune.split("-")]
+        except ValueError:
+            raise SystemExit("--fortune 格式应为 2024-2035")
+        md += "\n\n" + fortune.curve_md(ch, a, b)
     out = out_dir or args.out
     os.makedirs(out, exist_ok=True)
     base = os.path.join(out, "%s_%s" % (args.name, ch["year_ganzhi"]))
@@ -213,7 +234,7 @@ def main(argv=None):
     ap.add_argument("--school-huoling", dest="school_huoling", choices=["year", "hour"], default="year")
     ap.add_argument("--school-daxian", dest="school_daxian", choices=["guardian", "ming"], default="guardian")
     ap.add_argument("--year", type=int, help="分析流年的公历年")
-    ap.add_argument("--topic", choices=["marriage", "career", "wealth", "health", "all"], help="专题")
+    ap.add_argument("--topic", help="专题：marriage,career,wealth,health,study,children,parents,travel,partnership,legal,all（可逗号分隔）")
     ap.add_argument("--liuyue", type=int, help="输出某年的流月表")
     ap.add_argument("--date", help="输出某公历日的流月流日 YYYY-MM-DD")
     ap.add_argument("--hepan", action="store_true", help="与第二人合盘")
@@ -227,6 +248,9 @@ def main(argv=None):
     ap.add_argument("--hour2")
     ap.add_argument("--leap2", action="store_true")
     ap.add_argument("--miaowang", help="自备庙旺表 JSON 路径（可选）")
+    ap.add_argument("--lunar-month", dest="lunar_month", type=int, help="农历月（配合 --timing）")
+    ap.add_argument("--timing", choices=list(timing.EVENTS.keys()), help="择时事件类型")
+    ap.add_argument("--fortune", help="运势曲线年份区间，如 2024-2035")
     ap.add_argument("--json-out", dest="json_out", help="输出 JSON 到指定路径")
     ap.add_argument("--batch", help="批量排盘 CSV（列：name,gender,solar,time,year）")
     ap.add_argument("--out", default="out")

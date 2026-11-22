@@ -153,7 +153,112 @@ def health(ch, ln=None):
     return "\n".join(out)
 
 
-TOPICS = {"marriage": marriage, "career": career, "wealth": wealth, "health": health}
+
+
+def study(ch, ln=None):
+    out = []
+    A = out.append
+    A("## 学业专题（考试/进修）")
+    A("")
+    ming = _main(ch, "命宮")
+    A("- 命宫主星：%s。" % ("、".join(to_simp(x) for x in ming) or "空宫"))
+    stars_all = set()
+    for pn in ("命宮", "官祿", "父母"):
+        stars_all |= set(_stars(ch, pn))
+    if {"文昌", "文曲"} & stars_all:
+        A("- 命/官/父母宫见文昌或文曲：考运与文书方面有助力。")
+    if "化科" in "".join(_hua_of(ch, s) for s in stars_all):
+        A("- 见化科：考试、评审类事项有利。")
+    if any(s in stars_all for s in ("擎羊", "陀羅", "地空", "地劫")):
+        A("- 见煞星：考试易有临场波动，需多准备。")
+    A("- 建议：把命盘当作息与心态参考，备考仍以计划与练习为主。")
+    A("")
+    A("> 学业分析属传统术数倾向性描述，不构成升学建议。")
+    return "\n".join(out)
+
+
+def children(ch, ln=None):
+    out = []
+    A = out.append
+    A("## 子女专题")
+    A("")
+    A("- 子女宫主星：%s。" % ("、".join(to_simp(x) for x in _main(ch, "子女")) or "空宫（借对宫）"))
+    for s in _main(ch, "子女"):
+        h = _hua_of(ch, s)
+        if h:
+            A("  - %s化%s" % (to_simp(s), h))
+    A("- 建议：亲子关系重沟通与陪伴，命盘只作性格差异参考。")
+    A("")
+    A("> 子女分析属传统术数倾向性描述，不构成育儿建议。")
+    return "\n".join(out)
+
+
+def parents(ch, ln=None):
+    out = []
+    A = out.append
+    A("## 父母/长辈专题")
+    A("")
+    A("- 父母宫主星：%s。" % ("、".join(to_simp(x) for x in _main(ch, "父母")) or "空宫（借对宫）"))
+    for s in _main(ch, "父母"):
+        h = _hua_of(ch, s)
+        if h:
+            A("  - %s化%s" % (to_simp(s), h))
+    A("- 建议：与长辈的相处以界限与尊重为先。")
+    A("")
+    A("> 父母分析属传统术数倾向性描述，不构成家庭建议。")
+    return "\n".join(out)
+
+
+def travel(ch, ln=None):
+    out = []
+    A = out.append
+    A("## 迁移/出国专题")
+    A("")
+    A("- 迁移宫星曜：%s。" % ("、".join(to_simp(x) for x in _stars(ch, "遷移")) or "空宫"))
+    if "天馬" in _stars(ch, "遷移"):
+        A("- 迁移宫见天马：外出、异地发展机会较多。")
+    if any(s in _stars(ch, "遷移") for s in ("擎羊", "陀羅", "火星", "鈴星")):
+        A("- 迁移宫见煞：出行注意安全与突发状况。")
+    A("- 建议：出国/迁居以现实条件（签证、工作、家庭）为准。")
+    A("")
+    A("> 迁移分析属传统术数倾向性描述，不构成出行建议。")
+    return "\n".join(out)
+
+
+def partnership(ch, ln=None):
+    out = []
+    A = out.append
+    A("## 合伙/合作专题")
+    A("")
+    A("- 兄弟宫（合伙）：%s。" % ("、".join(to_simp(x) for x in _stars(ch, "兄弟")) or "空宫"))
+    A("- 奴仆宫（团队）：%s。" % ("、".join(to_simp(x) for x in _stars(ch, "奴僕")) or "空宫"))
+    if any(s in _stars(ch, "兄弟") + _stars(ch, "奴僕") for s in ("擎羊", "陀羅", "火星", "鈴星", "地空", "地劫")):
+        A("- 兄弟/奴仆宫见煞：合伙易有分歧，建议事先约定权责与退出机制。")
+    A("- 建议：合作看契约与信任，命盘只作相处风格参考。")
+    A("")
+    A("> 合伙分析属传统术数倾向性描述，不构成商业建议。")
+    return "\n".join(out)
+
+
+def legal(ch, ln=None):
+    out = []
+    A = out.append
+    A("## 官非/合同专题")
+    A("")
+    A("- 官禄宫星曜：%s。" % ("、".join(to_simp(x) for x in _stars(ch, "官祿")) or "空宫"))
+    A("- 田宅宫（合同/房产）：%s。" % ("、".join(to_simp(x) for x in _stars(ch, "田宅")) or "空宫"))
+    for s in _stars(ch, "官祿") + _stars(ch, "田宅"):
+        if s in ("擎羊", "陀羅", "天刑", "地空", "地劫", "火星", "鈴星"):
+            A("- 见%s：合同、文书、官非类事项宜谨慎。" % to_simp(s))
+    A("- 建议：涉及签约、诉讼请咨询专业人士；命盘不作法律判断。")
+    A("")
+    A("> 官非分析属传统术数倾向性描述，不构成法律建议。")
+    return "\n".join(out)
+
+
+TOPICS = {"marriage": marriage, "career": career, "wealth": wealth, "health": health,
+          "study": study, "children": children, "parents": parents,
+          "travel": travel, "partnership": partnership, "legal": legal}
 
 
 def analyze_topic(name, ch, ln=None):

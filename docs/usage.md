@@ -44,6 +44,10 @@
 | --school-daxian | guardian（父母/兄弟宫起）/ ming（命宫起） |
 | --json-out | 输出 JSON 到指定路径 |
 | --batch | 批量排盘 CSV（列：name,gender,solar,time,year） |
+| --timing | 择时事件：contract/interview/travel/date/medical/opening |
+| --lunar-month | 择时用农历月（配合 --timing --year） |
+| --fortune | 运势曲线年份区间，如 2024-2035 |
+| --topic | 可逗号分隔，如 study,legal 或 all |
 | --png | 额外生成 PNG 命盘图 |
 | --no-render | 不生成图 |
 
