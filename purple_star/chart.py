@@ -140,6 +140,11 @@ def chart(gender, year_gz, month, day, hour_idx, leap_month=False, late_zi="same
     for dz, d in daxian.items():
         gan = GAN[(yin_gan + (ZHI_IDX[dz] - 2)) % 10]
         daxian_sihua[dz] = {"gan": gan, "hua": sihua_table.get(gan, {})}
+        try:
+            from .liunian_stars import layer_stars
+            daxian_sihua[dz]["stars"] = layer_stars(gan, yz)
+        except Exception:
+            pass
     xx_start = XIAOXIAN[yz]
     xiaoxian = {}
     for age in range(1, 121):

@@ -56,6 +56,19 @@
 
 把 skills/purple-star-charting 目录复制到 DSH 的 skills 目录，即可在对话中触发（详见 skills/purple-star-charting/SKILL.md）。
 
+## 示例
+
+命盘图（SVG，GitHub 可直接显示）：
+
+![命盘示例](examples/sample_庚午.svg)
+
+完整报告示例：
+- Markdown：[examples/sample_庚午.md](examples/sample_庚午.md)
+- HTML：[examples/sample_report.html](examples/sample_report.html)（GitHub 不内嵌渲染 HTML，可下载后浏览器打开，或用 raw 链接）
+- 合盘示例：[examples/sampleA_x_sampleB.md](examples/sampleA_x_sampleB.md)
+
+> 示例数据均为合成，不含任何真实个人命盘。
+
 ## 数据与规则来源
 
 - 排盘规则（五虎遁、五行局、紫微定位、十四主星、辅星、四化、大限、小限）依据传统紫微斗数通行排盘法整理；

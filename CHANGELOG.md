@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.7.0
+
+### 新增
+- 流昌、流曲：按流年/大限天干查传统通行十干表（docs/rules-liuchangqu.md）
+- 大限运曜：运昌、运曲、运魁、运钺、运禄、运羊、运陀（流年报告中附带）
+- README 增加命盘 SVG 示例与 HTML 报告示例
+- CI 增加 ruff 静态检查与 coverage 覆盖率报告
+- 新增测试（总测试数 61）
+
+### 文档
+- 规则说明：docs/rules-liuchangqu.md
+- limitations 更新流昌流曲说明
+
 ## 0.6.0
 
 ### 新增

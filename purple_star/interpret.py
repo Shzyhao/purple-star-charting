@@ -347,6 +347,9 @@ def analyze(ch, ln=None, miaowang=None):
             A("- 当前大限：%d-%d岁（%s宫）" % (d["from"], d["to"], d["zhi"]))
         if "daxian_sihua" in ln and ln["daxian_sihua"].get("hua"):
             A("- 大限四化（%s干）：%s" % (ln["daxian_sihua"]["gan"], "；".join("%s化%s" % (v, k) for k, v in ln["daxian_sihua"]["hua"].items())))
+        if "daxian_sihua" in ln and ln["daxian_sihua"].get("stars"):
+            ys = ln["daxian_sihua"]["stars"]
+            A("- 大限运曜：%s" % "、".join("%s在%s" % (k, v) for k, v in ys.items() if v))
         if "xiaoxian" in ln:
             A("- 小限：%s宫" % ln["xiaoxian"])
         if ln.get("stars"):

@@ -3,7 +3,7 @@
 
 说明：流昌、流曲因流派差异较大（有以斗君起、有以年干起），暂不内置，见 docs/limitations.md。
 """
-from .consts import LUCUN, KUIYUE, TIANMA, GAN_IDX, ZHI_IDX, GAN, ZHI
+from .consts import LUCUN, KUIYUE, TIANMA, LIUCHANGQU, GAN_IDX, ZHI_IDX, GAN, ZHI
 
 
 def add(zhi, n):
@@ -15,6 +15,7 @@ def liunian_stars(year_gz):
     yg, yz = year_gz[0], year_gz[1]
     lc = LUCUN[yg]
     kui, yue = KUIYUE[yg]
+    chang, qu = LIUCHANGQU.get(yg, ("", ""))
     return {
         "流祿": lc,
         "流羊": add(lc, 1),
@@ -22,7 +23,18 @@ def liunian_stars(year_gz):
         "流馬": TIANMA[yz],
         "流魁": kui,
         "流鉞": yue,
+        "流昌": chang,
+        "流曲": qu,
     }
+
+
+def layer_stars(gan, year_zhi):
+    """按某一层天干起运曜（昌/曲/魁/钺/禄/羊/陀），用于大限层。"""
+    lc = LUCUN[gan]
+    kui, yue = KUIYUE[gan]
+    chang, qu = LIUCHANGQU.get(gan, ("", ""))
+    return {"運祿": lc, "運羊": add(lc, 1), "運陀": add(lc, -1),
+            "運魁": kui, "運鉞": yue, "運昌": chang, "運曲": qu}
 
 
 def place(ch, year_gz):

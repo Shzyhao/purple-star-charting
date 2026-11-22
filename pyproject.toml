@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "purple-star-charting"
-version = "0.6.0"
+version = "0.7.0"
 description = "紫微斗数排盘与白话解读（传统术数文化学习工具）"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -30,3 +30,10 @@ packages = ["purple_star"]
 
 [tool.setuptools.package-data]
 purple_star = ["data/*.json"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E9", "F63", "F7", "F82"]

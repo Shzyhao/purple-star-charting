@@ -52,7 +52,9 @@ class TestLiunianPalaces(unittest.TestCase):
         self.assertEqual(len(ln["palaces"]), 12)
         self.assertEqual(ln["palaces"][0]["palace"], "命宮")
         self.assertEqual(ln["palaces"][0]["zhi"], "午")
-        self.assertEqual(len(ln["stars"]), 6)
+        self.assertEqual(len(ln["stars"]), 8)
+        self.assertEqual(ln["stars"]["流昌"], "申")
+        self.assertEqual(ln["stars"]["流曲"], "午")
 
 
 class TestSchool(unittest.TestCase):
