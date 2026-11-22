@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "purple-star-charting"
-version = "0.8.1"
+version = "0.8.2"
 description = "紫微斗数排盘与白话解读（传统术数文化学习工具）"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -55,3 +55,14 @@ check_untyped_defs = false
 disallow_untyped_defs = false
 warn_unused_ignores = false
 warn_return_any = false
+
+
+[tool.coverage.run]
+source = ["purple_star"]
+omit = ["purple_star/__main__.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+]

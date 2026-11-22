@@ -193,7 +193,7 @@ def study(ch, ln=None):
         stars_all |= set(_stars(ch, pn))
     if {"文昌", "文曲"} & stars_all:
         A("- 命/官/父母宫见文昌或文曲：考运与文书方面有助力。")
-    if "化科" in "".join(_hua_of(ch, s) for s in stars_all):
+    if "科" in "".join(_hua_of(ch, s) for s in stars_all):
         A("- 见化科：考试、评审类事项有利。")
     if any(s in stars_all for s in ("擎羊", "陀羅", "地空", "地劫")):
         A("- 见煞星：考试易有临场波动，需多准备。")

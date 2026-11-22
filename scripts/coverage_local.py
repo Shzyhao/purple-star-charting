@@ -21,6 +21,13 @@ def stmt_lines(path):
     lines = set()
     for node in ast.walk(tree):
         if isinstance(node, ast.stmt):
+            # 跳过纯 docstring（coverage.py 中视为已执行，本地脚本排除以免虚低）
+            if (
+                isinstance(node, ast.Expr)
+                and isinstance(node.value, ast.Constant)
+                and isinstance(node.value.value, str)
+            ):
+                continue
             lines.add(node.lineno)
     return lines
 
@@ -52,7 +59,7 @@ def main():
     total_cov = total_all = 0
     rows = []
     for name in sorted(os.listdir(PKG)):
-        if not name.endswith(".py"):
+        if not name.endswith(".py") or name == "__main__.py":
             continue
         path = os.path.join(PKG, name)
         lines = stmt_lines(path)

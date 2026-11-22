@@ -250,7 +250,7 @@ def detect_geju(ch):
         res.append("紫府朝垣")
     if pair("武曲", "貪狼"):
         res.append("武貪同行")
-    if "祿存" in tri and any(v in tri for v in ch["hua"].values()):
+    if "祿存" in tri and any(star in tri for star in ch["hua"]):
         res.append("雙祿交流")
     if "祿存" in tri and "天馬" in tri:
         res.append("祿馬交馳")
