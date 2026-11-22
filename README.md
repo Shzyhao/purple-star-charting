@@ -21,6 +21,9 @@
 - 专题扩充至 10 类（学业/子女/父母/迁移/合伙/官非等）
 - 择时参考（--timing，按流日打分）
 - 运势曲线（--fortune 年份区间）
+- HTML 报告（--html）、繁体输出（--traditional，需 opencc）
+- PyPI 打包与命令行入口（purple-star）
+- DSH skill 安装脚本（scripts/install_skill.ps1 / .sh）
 - 专题：姻缘 / 事业 / 财运 / 健康（不涉寿命）
 - 合盘：双盘互看、四化互落、大限节奏、年龄差与相处建议
 - 流月 / 流日：按斗君起月，标注可靠性
@@ -69,6 +72,10 @@
 详见 docs/limitations.md。
 
 完整参数与输出说明见 [docs/usage.md](docs/usage.md)，版本记录见 [CHANGELOG.md](CHANGELOG.md)。
+- 快速上手：[docs/tutorial.md](docs/tutorial.md)
+- 常见问题：[docs/faq.md](docs/faq.md)
+- 术语表：[docs/glossary.md](docs/glossary.md)
+- English: [README.en.md](README.en.md)
 
 ## 免责声明与使用范围
 

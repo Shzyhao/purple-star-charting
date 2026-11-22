@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "purple-star-charting"
+version = "0.6.0"
+description = "紫微斗数排盘与白话解读（传统术数文化学习工具）"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Shzyhao" }]
+keywords = ["ziwei", "astrology", "chinese-astrology", "traditional-culture"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = ["lunardate>=0.3.0"]
+
+[project.optional-dependencies]
+png = ["Pillow>=9.0"]
+traditional = ["opencc>=1.1"]
+
+[project.scripts]
+purple-star = "purple_star.cli:main"
+
+[tool.setuptools]
+packages = ["purple_star"]
+
+[tool.setuptools.package-data]
+purple_star = ["data/*.json"]

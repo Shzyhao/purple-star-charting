@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.6.0
+
+### 新增
+- HTML 报告输出：--html（自包含，可直接打开/打印为 PDF）
+- 繁体输出：--traditional（需要可选依赖 opencc）
+- PyPI 打包：pyproject.toml + purple-star 命令入口
+- DSH skill 安装脚本：scripts/install_skill.ps1 / install_skill.sh
+- 文档：快速上手（tutorial）、FAQ、术语表、英文 README
+- 社区：CONTRIBUTING、Issue/PR 模板
+- 新增 8 个测试（总测试数 61）
+
 ## 0.5.0
 
 ### 新增

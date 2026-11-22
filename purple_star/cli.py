@@ -7,7 +7,7 @@ import os
 import sys
 
 from .chart import chart, gz_of_year, ganzhi_index, liunian
-from . import interpret, render, hepan, topics, liuyue, strength, fly, timing, fortune
+from . import interpret, render, hepan, topics, liuyue, strength, fly, timing, fortune, html_report
 from .consts import ZHI
 
 GAN = "甲乙丙丁戊己庚辛壬癸"
@@ -167,8 +167,16 @@ def run_one(args, out_dir=None):
     out = out_dir or args.out
     os.makedirs(out, exist_ok=True)
     base = os.path.join(out, "%s_%s" % (args.name, ch["year_ganzhi"]))
+    if getattr(args, "traditional", False):
+        try:
+            from opencc import OpenCC
+        except ImportError:
+            raise SystemExit("繁体输出需要 opencc：pip install opencc")
+        md = OpenCC("s2t").convert(md)
     with open(base + ".md", "w", encoding="utf-8") as f:
         f.write(md)
+    if getattr(args, "html", False):
+        html_report.write_html(base + ".md", base + ".html")
     if not args.no_render:
         render.draw_svg(ch, base + ".svg")
         if args.png:
@@ -251,6 +259,8 @@ def main(argv=None):
     ap.add_argument("--lunar-month", dest="lunar_month", type=int, help="农历月（配合 --timing）")
     ap.add_argument("--timing", choices=list(timing.EVENTS.keys()), help="择时事件类型")
     ap.add_argument("--fortune", help="运势曲线年份区间，如 2024-2035")
+    ap.add_argument("--html", action="store_true", help="同时输出 HTML 报告")
+    ap.add_argument("--traditional", action="store_true", help="输出繁体（需要 opencc）")
     ap.add_argument("--json-out", dest="json_out", help="输出 JSON 到指定路径")
     ap.add_argument("--batch", help="批量排盘 CSV（列：name,gender,solar,time,year）")
     ap.add_argument("--out", default="out")

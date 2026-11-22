@@ -48,6 +48,8 @@
 | --lunar-month | 择时用农历月（配合 --timing --year） |
 | --fortune | 运势曲线年份区间，如 2024-2035 |
 | --topic | 可逗号分隔，如 study,legal 或 all |
+| --html | 同时输出 HTML 报告 |
+| --traditional | 输出繁体（需要 opencc） |
 | --png | 额外生成 PNG 命盘图 |
 | --no-render | 不生成图 |
 
