@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """星曜强弱：五行生克法（自撰规则，不依赖任何版本庙旺表）。
 
 说明：传统庙旺落陷表因版本与整理成果差异，本项目不内置该表；
@@ -6,37 +5,79 @@
 属于本项目的规则实现，可解释、可复现，也不涉及任何原文。
 用户如自带庙旺表，可通过 load_miaowang() 以 JSON 方式加载（见 docs/data/miaowang-schema.md）。
 """
-import json
 
-from .consts import PALACES, to_simp
+import json
 
 # 十四主星与常用辅星的五行（依据传统星曜五行，属事实性规则）
 STAR_ELEMENT = {
-    "紫微": ("土",), "天機": ("木",), "太陽": ("火",), "武曲": ("金",),
-    "天同": ("水", "金"), "廉貞": ("火",), "天府": ("土",), "太陰": ("水",),
-    "貪狼": ("水", "木"), "巨門": ("水",), "天相": ("水",), "天梁": ("土",),
-    "七殺": ("火", "金"), "破軍": ("水",),
-    "文昌": ("金",), "文曲": ("水",), "左輔": ("土",), "右弼": ("水",),
-    "天魁": ("火",), "天鉞": ("火",), "祿存": ("土",), "天馬": ("火",),
-    "擎羊": ("金",), "陀羅": ("金",), "火星": ("火",), "鈴星": ("火",),
-    "地空": ("火",), "地劫": ("火",),
+    "紫微": ("土",),
+    "天機": ("木",),
+    "太陽": ("火",),
+    "武曲": ("金",),
+    "天同": ("水", "金"),
+    "廉貞": ("火",),
+    "天府": ("土",),
+    "太陰": ("水",),
+    "貪狼": ("水", "木"),
+    "巨門": ("水",),
+    "天相": ("水",),
+    "天梁": ("土",),
+    "七殺": ("火", "金"),
+    "破軍": ("水",),
+    "文昌": ("金",),
+    "文曲": ("水",),
+    "左輔": ("土",),
+    "右弼": ("水",),
+    "天魁": ("火",),
+    "天鉞": ("火",),
+    "祿存": ("土",),
+    "天馬": ("火",),
+    "擎羊": ("金",),
+    "陀羅": ("金",),
+    "火星": ("火",),
+    "鈴星": ("火",),
+    "地空": ("火",),
+    "地劫": ("火",),
 }
 # 十二地支五行
 PALACE_ELEMENT = {
-    "子": "水", "丑": "土", "寅": "木", "卯": "木", "辰": "土", "巳": "火",
-    "午": "火", "未": "土", "申": "金", "酉": "金", "戌": "土", "亥": "水",
+    "子": "水",
+    "丑": "土",
+    "寅": "木",
+    "卯": "木",
+    "辰": "土",
+    "巳": "火",
+    "午": "火",
+    "未": "土",
+    "申": "金",
+    "酉": "金",
+    "戌": "土",
+    "亥": "水",
 }
 SHENG = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
 KE = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}
 REL_SCORE = {"宮生星": 2.0, "比和": 1.0, "星克宮": 0.0, "星生宮": -1.0, "宮克星": -2.0}
 
-MAIN_STARS = ("紫微", "天機", "太陽", "武曲", "天同", "廉貞", "天府", "太陰",
-              "貪狼", "巨門", "天相", "天梁", "七殺", "破軍")
+MAIN_STARS = (
+    "紫微",
+    "天機",
+    "太陽",
+    "武曲",
+    "天同",
+    "廉貞",
+    "天府",
+    "太陰",
+    "貪狼",
+    "巨門",
+    "天相",
+    "天梁",
+    "七殺",
+    "破軍",
+)
 JI_STARS = ("文昌", "文曲", "左輔", "右弼", "天魁", "天鉞", "祿存", "天馬")
 SHA_STARS = ("擎羊", "陀羅", "火星", "鈴星", "地空", "地劫")
 
-MIAOWANG_GRADE_SCORE = {"廟": 3.0, "旺": 2.0, "得地": 1.0, "利盆": 0.5,
-                        "平和": 0.0, "不得地": -1.0, "陷": -2.0}
+MIAOWANG_GRADE_SCORE = {"廟": 3.0, "旺": 2.0, "得地": 1.0, "利盆": 0.5, "平和": 0.0, "不得地": -1.0, "陷": -2.0}
 
 
 def relation(star_el, palace_el):
@@ -88,12 +129,20 @@ def palace_strength(ch, palace_name):
         sc = star_score(s, zhi)
         if sc is None:
             continue
-        rows.append({"star": s, "score": sc, "level": level_of(sc), "rel": relation(STAR_ELEMENT[s][0], PALACE_ELEMENT[zhi])})
+        rows.append(
+            {"star": s, "score": sc, "level": level_of(sc), "rel": relation(STAR_ELEMENT[s][0], PALACE_ELEMENT[zhi])}
+        )
         if s in MAIN_STARS:
             main_scores.append(sc)
     avg = round(sum(main_scores) / len(main_scores), 2) if main_scores else None
-    return {"palace": palace_name, "zhi": zhi, "rows": rows, "avg": avg, "level": level_of(avg),
-            "has_main": bool(main_scores)}
+    return {
+        "palace": palace_name,
+        "zhi": zhi,
+        "rows": rows,
+        "avg": avg,
+        "level": level_of(avg),
+        "has_main": bool(main_scores),
+    }
 
 
 def sanfang(ch):
@@ -110,8 +159,7 @@ def sanfang(ch):
                 ji.add(s)
             if s in SHA_STARS:
                 sha.add(s)
-    return {"stats": stats, "avg": avg, "level": level_of(avg),
-            "ji": sorted(ji), "sha": sorted(sha)}
+    return {"stats": stats, "avg": avg, "level": level_of(avg), "ji": sorted(ji), "sha": sorted(sha)}
 
 
 def load_miaowang(path):

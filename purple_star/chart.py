@@ -1,12 +1,34 @@
-# -*- coding: utf-8 -*-
 """排盘核心：仅依据规则计算，不读取任何原书文本。"""
+
 import json
 import os
 
-from .consts import (GAN, ZHI, GAN_IDX, ZHI_IDX, WUHU, NAYIN, JU, JU_NAME,
-                     ZIWEI_SERIES, TIANFU_SERIES, SIHUA, SIHUA_TABLES, LUCUN, KUIYUE, TIANMA,
-                     HUOLING, LING, XIAOXIAN, CHANGSHENG_START, CHANGSHENG_NAMES,
-                     BOSHI_NAMES, PALACES, MINGZHU, SHENZHU)
+from .consts import (
+    BOSHI_NAMES,
+    CHANGSHENG_NAMES,
+    CHANGSHENG_START,
+    GAN,
+    GAN_IDX,
+    HUOLING,
+    JU,
+    JU_NAME,
+    KUIYUE,
+    LING,
+    LUCUN,
+    MINGZHU,
+    NAYIN,
+    PALACES,
+    SHENZHU,
+    SIHUA,
+    SIHUA_TABLES,
+    TIANFU_SERIES,
+    TIANMA,
+    WUHU,
+    XIAOXIAN,
+    ZHI,
+    ZHI_IDX,
+    ZIWEI_SERIES,
+)
 
 _DATA = os.path.join(os.path.dirname(__file__), "data", "ziwei_table.json")
 with open(_DATA, encoding="utf-8") as f:
@@ -137,11 +159,12 @@ def chart(gender, year_gz, month, day, hour_idx, leap_month=False, late_zi="same
         age_from = ju_num + 10 * k
         daxian[pos] = {"from": age_from, "to": age_from + 9, "order": k + 1}
     daxian_sihua = {}
-    for dz, d in daxian.items():
+    for dz, _d in daxian.items():
         gan = GAN[(yin_gan + (ZHI_IDX[dz] - 2)) % 10]
         daxian_sihua[dz] = {"gan": gan, "hua": sihua_table.get(gan, {})}
         try:
             from .liunian_stars import layer_stars
+
             daxian_sihua[dz]["stars"] = layer_stars(gan, yz)
         except Exception:
             pass
@@ -151,18 +174,35 @@ def chart(gender, year_gz, month, day, hour_idx, leap_month=False, late_zi="same
         step = (age - 1) if male else -(age - 1)
         xiaoxian[age] = add(xx_start, step)
     return {
-        "input": {"gender": gender, "year_gz": year_gz, "lunar_month": month,
-                  "lunar_day": day, "hour": ZHI[hour_idx] + "時"},
+        "input": {
+            "gender": gender,
+            "year_gz": year_gz,
+            "lunar_month": month,
+            "lunar_day": day,
+            "hour": ZHI[hour_idx] + "時",
+        },
         "notes": notes,
         "year_ganzhi": year_gz,
         "yin_gan": GAN[yin_gan],
-        "ming_zhi": ming_z, "ming_gan": ming_gan, "shen_zhi": shen_z,
-        "nayin": nayin, "ju": ju_name, "ju_number": ju_num,
-        "ziwei": zw, "tianfu": tf,
-        "palaces": palaces, "shen_palace": shen_palace, "hua": hua,
-        "daxian": daxian, "daxian_sihua": daxian_sihua, "xiaoxian": xiaoxian,
-        "mingzhu": MINGZHU[ming_z], "shenzhu": SHENZHU[yz],
-        "yang_yin": "陽" if yang_gan else "陰", "male": male, "forward": forward,
+        "ming_zhi": ming_z,
+        "ming_gan": ming_gan,
+        "shen_zhi": shen_z,
+        "nayin": nayin,
+        "ju": ju_name,
+        "ju_number": ju_num,
+        "ziwei": zw,
+        "tianfu": tf,
+        "palaces": palaces,
+        "shen_palace": shen_palace,
+        "hua": hua,
+        "daxian": daxian,
+        "daxian_sihua": daxian_sihua,
+        "xiaoxian": xiaoxian,
+        "mingzhu": MINGZHU[ming_z],
+        "shenzhu": SHENZHU[yz],
+        "yang_yin": "陽" if yang_gan else "陰",
+        "male": male,
+        "forward": forward,
         "chang_sheng": {add(CHANGSHENG_START[ju_num], k if forward else -k): CHANGSHENG_NAMES[k] for k in range(12)},
         "bo_shi": {add(lc, (k if forward else -k)): BOSHI_NAMES[k] for k in range(12)},
     }
@@ -176,7 +216,9 @@ def doujun(year_zhi, birth_month, birth_hour_idx):
 def liunian(ch, year_gz, age=None):
     """流年：流年命宫、流年四化落宫、大限/小限叠加。"""
     yg, yz = year_gz[0], year_gz[1]
-    from .liunian_stars import liunian_stars, place as _place
+    from .liunian_stars import liunian_stars
+    from .liunian_stars import place as _place
+
     sihua_table = ch.get("sihua_table", SIHUA)
     res = {"year_gz": year_gz, "ming": yz, "hua": sihua_table.get(yg, {})}
     res["stars"] = liunian_stars(year_gz)
@@ -185,8 +227,9 @@ def liunian(ch, year_gz, age=None):
     for i, pname in enumerate(PALACES):
         zpos = add(yz, -i)
         base_palace = [k for k, v in ch["palaces"].items() if v["zhi"] == zpos][0]
-        ln_palaces.append({"palace": pname, "zhi": zpos, "base": base_palace,
-                           "stars": ch["palaces"][base_palace]["stars"]})
+        ln_palaces.append(
+            {"palace": pname, "zhi": zpos, "base": base_palace, "stars": ch["palaces"][base_palace]["stars"]}
+        )
     res["palaces"] = ln_palaces
     loc = {}
     for h, star in sihua_table.get(yg, {}).items():

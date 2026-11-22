@@ -1,14 +1,12 @@
-# -*- coding: utf-8 -*-
 import importlib.util
 import os
 import sys
-import tempfile
 import unittest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from purple_star import html_report, cli
+from purple_star import cli, html_report
 
 
 class TestHtml(unittest.TestCase):
@@ -33,18 +31,36 @@ class TestHtml(unittest.TestCase):
                 self.assertIn("<!DOCTYPE html>", f.read())
         finally:
             import shutil
+
             shutil.rmtree(d, ignore_errors=True)
 
     def test_cli_html(self):
         d = os.path.join(ROOT, "out_test_html_cli_" + str(os.getpid()))
         os.makedirs(d, exist_ok=True)
         try:
-            code = cli.main(["--gender", "男", "--lunar-gz", "庚午", "--month", "4", "--day", "21",
-                             "--hour", "未", "--out", d, "--no-render", "--html"])
+            code = cli.main(
+                [
+                    "--gender",
+                    "男",
+                    "--lunar-gz",
+                    "庚午",
+                    "--month",
+                    "4",
+                    "--day",
+                    "21",
+                    "--hour",
+                    "未",
+                    "--out",
+                    d,
+                    "--no-render",
+                    "--html",
+                ]
+            )
             self.assertEqual(code, 0)
             self.assertTrue(any(f.endswith(".html") for f in os.listdir(d)))
         finally:
             import shutil
+
             shutil.rmtree(d, ignore_errors=True)
 
 
@@ -73,14 +89,31 @@ class TestTraditional(unittest.TestCase):
         d = os.path.join(ROOT, "out_test_trad_" + str(os.getpid()))
         os.makedirs(d, exist_ok=True)
         try:
-            code = cli.main(["--gender", "男", "--lunar-gz", "庚午", "--month", "4", "--day", "21",
-                             "--hour", "未", "--out", d, "--no-render", "--traditional"])
+            code = cli.main(
+                [
+                    "--gender",
+                    "男",
+                    "--lunar-gz",
+                    "庚午",
+                    "--month",
+                    "4",
+                    "--day",
+                    "21",
+                    "--hour",
+                    "未",
+                    "--out",
+                    d,
+                    "--no-render",
+                    "--traditional",
+                ]
+            )
             self.assertEqual(code, 0)
             files = [f for f in os.listdir(d) if f.endswith(".md")]
             with open(os.path.join(d, files[0]), encoding="utf-8") as f:
                 self.assertIn("命盤", f.read())
         finally:
             import shutil
+
             shutil.rmtree(d, ignore_errors=True)
 
 

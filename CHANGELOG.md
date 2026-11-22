@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.1
+
+### 工程
+- lint 套件：ruff check（E/F/W/I/UP/B）+ ruff format 检查
+- mypy 基础类型检查（advisory）
+- coverage 覆盖率报告（门槛 50%）
+- actionlint（workflows）、shellcheck（scripts）、markdownlint（docs）
+- 代码按 ruff format 统一格式化
+
 ## 0.7.0
 
 ### 新增

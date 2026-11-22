@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import sys
 import unittest
@@ -6,8 +5,8 @@ import unittest
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
+from purple_star import fortune, hepan, timing, topics
 from purple_star.chart import chart
-from purple_star import topics, timing, fortune, hepan
 
 
 class TestNewTopics(unittest.TestCase):

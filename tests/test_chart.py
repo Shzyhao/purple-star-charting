@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import sys
 import unittest
@@ -6,8 +5,8 @@ import unittest
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from purple_star.chart import chart, liunian, gz_of_year, doujun
 from purple_star import interpret, render
+from purple_star.chart import chart, doujun, gz_of_year, liunian
 
 
 class TestChart(unittest.TestCase):

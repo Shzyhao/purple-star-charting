@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """版权合规扫描（默认快速模式；--deep 启用特征句哈希比对）。
 
 检查项：
@@ -9,6 +8,7 @@
 用法：python scripts/copyright_scan.py [repo_root] [--deep]
 退出码：0 通过，1 有问题
 """
+
 import hashlib
 import json
 import os
@@ -65,7 +65,7 @@ def scan():
                 text = open(full, encoding="utf-8").read()
             except (UnicodeDecodeError, OSError):
                 continue
-            for q in QUOTE_RE.findall(text):
+            for _q in QUOTE_RE.findall(text):
                 problems.append(("QUOTE", rel, "出现中文引号引文"))
             if hashes:
                 for seg in re.split(r"[。；！？\n]", text):
@@ -76,7 +76,7 @@ def scan():
                         if len(n) < length:
                             continue
                         for i in range(0, len(n) - length + 1):
-                            h = hashlib.sha256(n[i:i + length].encode()).hexdigest()
+                            h = hashlib.sha256(n[i : i + length].encode()).hexdigest()
                             if h in hashes:
                                 problems.append(("PHRASE", rel, "命中原文特征句哈希"))
     return problems

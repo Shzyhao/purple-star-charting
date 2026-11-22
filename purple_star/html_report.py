@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 """把 Markdown 报告转成自包含 HTML（无外部依赖）。"""
+
 import html as _html
 import re
 
@@ -27,7 +27,9 @@ def md_to_html(md, title="紫微斗数命盘解析"):
                 out.append("</ul>")
                 in_ul = False
             header = [c.strip() for c in line.strip().strip("|").split("|")]
-            out.append("<table><thead><tr>" + "".join("<th>%s</th>" % _inline(c) for c in header) + "</tr></thead><tbody>")
+            out.append(
+                "<table><thead><tr>" + "".join("<th>%s</th>" % _inline(c) for c in header) + "</tr></thead><tbody>"
+            )
             i += 2
             while i < len(lines) and lines[i].startswith("|"):
                 cells = [c.strip() for c in lines[i].strip().strip("|").split("|")]

@@ -19,14 +19,29 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install ruff coverage
-      - name: Lint (ruff)
+          pip install ruff coverage mypy
+      - name: Lint (ruff check)
         run: ruff check .
+      - name: Format check (ruff format)
+        run: ruff format --check .
+      - name: Actionlint (workflows)
+        uses: raven-actions/actionlint@v2
+      - name: Shellcheck (scripts)
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: ./scripts
+      - name: Markdownlint
+        uses: DavidAnson/markdownlint-cli2-action@v18
+        with:
+          globs: "docs/**/*.md README.md README.en.md CONTRIBUTING.md DISCLAIMER.md CHANGELOG.md"
+      - name: Type check (mypy, advisory)
+        continue-on-error: true
+        run: mypy purple_star
       - name: Unit tests
         run: python -m unittest discover -s tests -v
-      - name: Coverage (report)
+      - name: Coverage (fail under 50%)
         run: |
           coverage run -m unittest discover -s tests
-          coverage report -m
+          coverage report -m --fail-under=50
       - name: Copyright scan (deep)
         run: python scripts/copyright_scan.py . --deep

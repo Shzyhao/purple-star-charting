@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
 """专题：姻缘、事业、财运、健康（自撰规则，不含原文；不涉寿命）。"""
+
 from .consts import PALACES, to_simp
-from .interpret import STAR_TEXT, PALACE_TEXT, detect_geju
+from .interpret import STAR_TEXT
 
 MAIN = ("紫微", "天機", "太陽", "武曲", "天同", "廉貞", "天府", "太陰", "貪狼", "巨門", "天相", "天梁", "七殺", "破軍")
 SHA = ("擎羊", "陀羅", "火星", "鈴星", "地空", "地劫", "天刑")
@@ -61,8 +61,13 @@ def marriage(ch, ln=None):
             A("- 夫妻宫主星化忌：感情方面需多包容，易有牵挂与压力。")
     if ln:
         A("")
-        A("- 流年 %s：流年四化落夫妻宫：%s" % (ln["year_gz"], "、".join(
-            "%s化%s" % (x["star"], h) for h, x in ln["hua_loc"].items() if x["palace"] == "夫妻") or "无"))
+        A(
+            "- 流年 %s：流年四化落夫妻宫：%s"
+            % (
+                ln["year_gz"],
+                "、".join("%s化%s" % (x["star"], h) for h, x in ln["hua_loc"].items() if x["palace"] == "夫妻") or "无",
+            )
+        )
         qz = [x for h, x in ln["hua_loc"].items() if x["palace"] == "夫妻"]
         if qz:
             A("  - 流年有能量进入夫妻宫，感情主题活跃，但吉凶要看星曜与煞星。")
@@ -81,11 +86,11 @@ def career(ch, ln=None):
     ming = _main(ch, "命宮")
     A("- 命宫主星：%s。" % ("、".join(to_simp(s) for s in ming) or "空宫"))
     if any(s in ("天機", "太陰", "天同", "天梁") for s in ming) or "機月同梁" in "".join(to_simp(s) for s in ming):
-        A("  - 偏\"机月同梁\"型：适合稳定体系、专业技术、文职、顾问、教育与研究类工作。")
+        A('  - 偏"机月同梁"型：适合稳定体系、专业技术、文职、顾问、教育与研究类工作。')
     if any(s in ("七殺", "破軍", "貪狼") for s in ming):
-        A("  - 偏\"杀破狼\"型：适合开创、业务、竞争性行业，宜有平台与团队支撑。")
+        A('  - 偏"杀破狼"型：适合开创、业务、竞争性行业，宜有平台与团队支撑。')
     if any(s in ("天府", "天相") for s in ming):
-        A("  - 偏\"府相\"型：稳健、善于管理与协调，适合体制内或大型组织。")
+        A('  - 偏"府相"型：稳健、善于管理与协调，适合体制内或大型组织。')
     if any(s in ("太陽", "紫微") for s in ming):
         A("  - 主星带贵气：适合公职、管理、品牌、需要名声的行业。")
     g = _main(ch, "官祿")
@@ -93,11 +98,14 @@ def career(ch, ln=None):
     for s in g:
         h = _hua_of(ch, s)
         if h in ("祿", "權", "科", "忌"):
-            A("  - 官禄宫主星化%s，事业上%s。" % (h, {"祿": "多机会与资源", "權": "有主导权也有压力", "科": "重名声与文书", "忌": "多变动与阻碍"}[h]))
+            A(
+                "  - 官禄宫主星化%s，事业上%s。"
+                % (h, {"祿": "多机会与资源", "權": "有主导权也有压力", "科": "重名声与文书", "忌": "多变动与阻碍"}[h])
+            )
     if ch["daxian"]:
         A("- 大限：%s起限，每十年一宫，可对照事业阶段。" % ch["ju"])
     A("")
-    A("- 建议：把命盘当\"性格与节奏参考\"，职业选择仍以能力、兴趣与市场为准。")
+    A('- 建议：把命盘当"性格与节奏参考"，职业选择仍以能力、兴趣与市场为准。')
     A("")
     A("> 事业分析属传统术数倾向性描述，不构成职业建议。")
     return "\n".join(out)
@@ -113,7 +121,14 @@ def wealth(ch, ln=None):
     for s in _main(ch, "財帛"):
         h = _hua_of(ch, s)
         if h:
-            A("  - %s化%s：%s" % (to_simp(s), h, {"祿": "财路顺、有进项", "權": "理财主导、压力大", "科": "靠名声文书得财", "忌": "易破耗或纠纷"}[h]))
+            A(
+                "  - %s化%s：%s"
+                % (
+                    to_simp(s),
+                    h,
+                    {"祿": "财路顺、有进项", "權": "理财主导、压力大", "科": "靠名声文书得财", "忌": "易破耗或纠纷"}[h],
+                )
+            )
     if "祿存" in cai:
         A("- 财帛宫见禄存：主积蓄力，宜稳健理财。")
     if any(s in cai for s in ("擎羊", "陀羅", "地空", "地劫", "火星", "鈴星")):
@@ -127,10 +142,20 @@ def wealth(ch, ln=None):
 
 
 HEALTH_MAP = {
-    "紫微": "脾胃、头部", "天機": "肝胆、神经", "太陽": "眼目、心血管", "武曲": "呼吸、牙齿",
-    "天同": "脾胃、消化", "廉貞": "血液、心血管、妇科", "天府": "脾胃、代谢", "太陰": "肾、泌尿、妇科",
-    "貪狼": "肝胆、泌尿、内分泌", "巨門": "肠胃、口腔", "天相": "皮肤、泌尿", "天梁": "慢性病、脾胃",
-    "七殺": "呼吸、外伤", "破軍": "肾、泌尿",
+    "紫微": "脾胃、头部",
+    "天機": "肝胆、神经",
+    "太陽": "眼目、心血管",
+    "武曲": "呼吸、牙齿",
+    "天同": "脾胃、消化",
+    "廉貞": "血液、心血管、妇科",
+    "天府": "脾胃、代谢",
+    "太陰": "肾、泌尿、妇科",
+    "貪狼": "肝胆、泌尿、内分泌",
+    "巨門": "肠胃、口腔",
+    "天相": "皮肤、泌尿",
+    "天梁": "慢性病、脾胃",
+    "七殺": "呼吸、外伤",
+    "破軍": "肾、泌尿",
 }
 
 
@@ -151,8 +176,6 @@ def health(ch, ln=None):
     A("")
     A("> 健康专题仅为传统术数文化描述，不构成诊断或医疗建议。")
     return "\n".join(out)
-
-
 
 
 def study(ch, ln=None):
@@ -256,9 +279,18 @@ def legal(ch, ln=None):
     return "\n".join(out)
 
 
-TOPICS = {"marriage": marriage, "career": career, "wealth": wealth, "health": health,
-          "study": study, "children": children, "parents": parents,
-          "travel": travel, "partnership": partnership, "legal": legal}
+TOPICS = {
+    "marriage": marriage,
+    "career": career,
+    "wealth": wealth,
+    "health": health,
+    "study": study,
+    "children": children,
+    "parents": parents,
+    "travel": travel,
+    "partnership": partnership,
+    "legal": legal,
+}
 
 
 def analyze_topic(name, ch, ln=None):

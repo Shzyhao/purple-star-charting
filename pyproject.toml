@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "purple-star-charting"
-version = "0.7.0"
+version = "0.7.1"
 description = "紫微斗数排盘与白话解读（传统术数文化学习工具）"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -36,4 +36,20 @@ line-length = 120
 target-version = "py39"
 
 [tool.ruff.lint]
-select = ["E9", "F63", "F7", "F82"]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = [
+    "E501",  # 行宽由 formatter 控制，中文文档/表格不强制
+    "UP031",  # 保留 % 格式化，便于与中文长文本对照
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E402"]  # 测试需先 sys.path.insert 再 import
+
+[tool.mypy]
+python_version = "3.9"
+files = ["purple_star"]
+ignore_missing_imports = true
+check_untyped_defs = false
+disallow_untyped_defs = false
+warn_unused_ignores = false
+warn_return_any = false

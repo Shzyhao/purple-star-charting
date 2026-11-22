@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import json
 import os
 import sys
@@ -8,8 +7,8 @@ import unittest
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from purple_star.chart import chart
 from purple_star import strength
+from purple_star.chart import chart
 
 
 class TestStrength(unittest.TestCase):
@@ -59,6 +58,7 @@ class TestStrength(unittest.TestCase):
 
     def test_analyze_with_miaowang(self):
         from purple_star import interpret
+
         table = {"紫微": {"戌": "旺"}}
         md = interpret.analyze(self.ch, None, miaowang=table)
         self.assertIn("强弱与三方四正", md)

@@ -1,13 +1,13 @@
-# -*- coding: utf-8 -*-
 """命令行入口：排盘、专题、合盘、流月流日、流年诸星、飞星、JSON、批量。"""
+
 import argparse
 import csv
 import json
 import os
 import sys
 
-from .chart import chart, gz_of_year, ganzhi_index, liunian
-from . import interpret, render, hepan, topics, liuyue, strength, fly, timing, fortune, html_report
+from . import fly, fortune, hepan, html_report, interpret, liuyue, render, strength, timing, topics
+from .chart import chart, ganzhi_index, gz_of_year, liunian
 from .consts import ZHI
 
 GAN = "甲乙丙丁戊己庚辛壬癸"
@@ -23,7 +23,7 @@ def solar_to_lunar(y, m, d):
     try:
         from lunardate import LunarDate
     except ImportError:
-        raise SystemExit("需要 lunardate：pip install lunardate")
+        raise SystemExit("需要 lunardate：pip install lunardate") from None
     ld = LunarDate.fromSolarDate(y, m, d)
     return ld.year, ld.month, ld.day, getattr(ld, "isLeapMonth", False)
 
@@ -43,6 +43,7 @@ def _solar_hour(args, hh, mm, y, m, d):
     if not city and lon is None:
         return hh, mm, None
     from . import solartime
+
     if lon is None:
         lon = solartime.CITY_LON.get(city)
     if lon is None:
@@ -53,15 +54,15 @@ def _solar_hour(args, hh, mm, y, m, d):
 
 def build_chart(args, prefix="", school=None):
     if prefix:
-        solar = getattr(args, "solar2")
-        time_s = getattr(args, "time2") or "12:00"
-        lunar_gz = getattr(args, "lunar_gz2")
-        month = getattr(args, "month2")
-        day = getattr(args, "day2")
-        hour = getattr(args, "hour2")
-        gender = getattr(args, "gender2")
-        leap = getattr(args, "leap2")
-        late = getattr(args, "late_zi")
+        solar = args.solar2
+        time_s = args.time2 or "12:00"
+        lunar_gz = args.lunar_gz2
+        month = args.month2
+        day = args.day2
+        hour = args.hour2
+        gender = args.gender2
+        leap = args.leap2
+        late = args.late_zi
     else:
         solar = args.solar
         time_s = args.time
@@ -111,8 +112,14 @@ def _json_payload(ch, ln):
     return {
         "version": "0.4.0",
         "input": ch["input"],
-        "ming": {"zhi": ch["ming_zhi"], "gan": ch["ming_gan"], "shen": ch["shen_zhi"],
-                 "ju": ch["ju"], "ziwei": ch["ziwei"], "tianfu": ch["tianfu"]},
+        "ming": {
+            "zhi": ch["ming_zhi"],
+            "gan": ch["ming_gan"],
+            "shen": ch["shen_zhi"],
+            "ju": ch["ju"],
+            "ziwei": ch["ziwei"],
+            "tianfu": ch["tianfu"],
+        },
         "hua": ch["hua"],
         "palaces": {k: {"zhi": v["zhi"], "stars": v["stars"]} for k, v in ch["palaces"].items()},
         "daxian": ch["daxian"],
@@ -162,7 +169,7 @@ def run_one(args, out_dir=None):
         try:
             a, b = [int(x) for x in args.fortune.split("-")]
         except ValueError:
-            raise SystemExit("--fortune 格式应为 2024-2035")
+            raise SystemExit("--fortune 格式应为 2024-2035") from None
         md += "\n\n" + fortune.curve_md(ch, a, b)
     out = out_dir or args.out
     os.makedirs(out, exist_ok=True)
@@ -171,7 +178,7 @@ def run_one(args, out_dir=None):
         try:
             from opencc import OpenCC
         except ImportError:
-            raise SystemExit("繁体输出需要 opencc：pip install opencc")
+            raise SystemExit("繁体输出需要 opencc：pip install opencc") from None
         md = OpenCC("s2t").convert(md)
     with open(base + ".md", "w", encoding="utf-8") as f:
         f.write(md)
@@ -209,8 +216,15 @@ def run_batch(args):
         ns.json_out = None
         try:
             base, ch, ln = run_one(ns, out_root)
-            summary.append({"name": ns.name, "status": "ok", "file": os.path.basename(base) + ".md",
-                            "ming": ch["ming_zhi"], "ju": ch["ju"]})
+            summary.append(
+                {
+                    "name": ns.name,
+                    "status": "ok",
+                    "file": os.path.basename(base) + ".md",
+                    "ming": ch["ming_zhi"],
+                    "ju": ch["ju"],
+                }
+            )
         except Exception as e:
             summary.append({"name": ns.name, "status": "error", "error": str(e)[:80]})
     sum_path = os.path.join(out_root, "batch_summary.csv")
@@ -242,7 +256,10 @@ def main(argv=None):
     ap.add_argument("--school-huoling", dest="school_huoling", choices=["year", "hour"], default="year")
     ap.add_argument("--school-daxian", dest="school_daxian", choices=["guardian", "ming"], default="guardian")
     ap.add_argument("--year", type=int, help="分析流年的公历年")
-    ap.add_argument("--topic", help="专题：marriage,career,wealth,health,study,children,parents,travel,partnership,legal,all（可逗号分隔）")
+    ap.add_argument(
+        "--topic",
+        help="专题：marriage,career,wealth,health,study,children,parents,travel,partnership,legal,all（可逗号分隔）",
+    )
     ap.add_argument("--liuyue", type=int, help="输出某年的流月表")
     ap.add_argument("--date", help="输出某公历日的流月流日 YYYY-MM-DD")
     ap.add_argument("--hepan", action="store_true", help="与第二人合盘")
@@ -277,8 +294,9 @@ def main(argv=None):
         if not args.gender2:
             raise SystemExit("合盘需要 --gender2")
         b = build_chart(args, prefix="2", school=_school(args))
-        hmd = hepan.analyze_hepan(ch, b, args.name, args.name2, args.year or 2026,
-                                  year_a=ch.get("birth_year"), year_b=b.get("birth_year"))
+        hmd = hepan.analyze_hepan(
+            ch, b, args.name, args.name2, args.year or 2026, year_a=ch.get("birth_year"), year_b=b.get("birth_year")
+        )
         hbase = os.path.join(args.out, "%s_x_%s.md" % (args.name, args.name2))
         with open(hbase, "w", encoding="utf-8") as f:
             f.write(hmd)

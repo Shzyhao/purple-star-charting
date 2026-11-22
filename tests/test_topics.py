@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import sys
 import unittest
@@ -6,8 +5,8 @@ import unittest
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from purple_star.chart import chart, liunian
 from purple_star import topics
+from purple_star.chart import chart, liunian
 
 
 class TestTopics(unittest.TestCase):

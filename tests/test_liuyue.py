@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import sys
 import unittest
@@ -6,8 +5,8 @@ import unittest
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from purple_star.chart import chart
 from purple_star import liuyue
+from purple_star.chart import chart
 
 
 class TestLiuyue(unittest.TestCase):
@@ -26,7 +25,7 @@ class TestLiuyue(unittest.TestCase):
         t = liuyue.liuyue_table(self.ch, 2026)
         self.assertEqual(t["year_gz"], "丙午")
         self.assertEqual(len(t["rows"]), 12)
-        self.assertEqual(t["rows"][0]["zhi"], "戌")   # 正月在斗君
+        self.assertEqual(t["rows"][0]["zhi"], "戌")  # 正月在斗君
         self.assertEqual(t["rows"][0]["palace"], "命宮")
 
     def test_liuri(self):

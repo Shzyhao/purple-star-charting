@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """生成特征句哈希表（只输出哈希，不保存、不打印原文）。
 
 用法：
@@ -7,6 +6,7 @@
 sentence_file 为本地私有文件（默认 scripts/phrase_sources.local.txt，已在 .gitignore 中排除），
 每行一句。若文件不存在，脚本会提示并退出——这样做是为了让公开仓库不含任何原文句子。
 """
+
 import hashlib
 import json
 import os

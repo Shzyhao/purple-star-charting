@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
 """流年诸星：按流年干支起流禄、流羊、流陀、流马、流魁、流钺。
 
 说明：流昌、流曲因流派差异较大（有以斗君起、有以年干起），暂不内置，见 docs/limitations.md。
 """
-from .consts import LUCUN, KUIYUE, TIANMA, LIUCHANGQU, GAN_IDX, ZHI_IDX, GAN, ZHI
+
+from .consts import KUIYUE, LIUCHANGQU, LUCUN, TIANMA, ZHI, ZHI_IDX
 
 
 def add(zhi, n):
@@ -33,8 +33,7 @@ def layer_stars(gan, year_zhi):
     lc = LUCUN[gan]
     kui, yue = KUIYUE[gan]
     chang, qu = LIUCHANGQU.get(gan, ("", ""))
-    return {"運祿": lc, "運羊": add(lc, 1), "運陀": add(lc, -1),
-            "運魁": kui, "運鉞": yue, "運昌": chang, "運曲": qu}
+    return {"運祿": lc, "運羊": add(lc, 1), "運陀": add(lc, -1), "運魁": kui, "運鉞": yue, "運昌": chang, "運曲": qu}
 
 
 def place(ch, year_gz):

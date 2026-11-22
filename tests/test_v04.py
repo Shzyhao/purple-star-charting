@@ -1,25 +1,22 @@
-# -*- coding: utf-8 -*-
 import csv
-import json
 import os
 import sys
-import tempfile
 import unittest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
+from purple_star import cli, fly, liunian_stars, solartime
 from purple_star.chart import chart, liunian
-from purple_star import liunian_stars, fly, solartime, cli
 
 
 class TestLiunianStars(unittest.TestCase):
     def test_positions(self):
         s = liunian_stars.liunian_stars("丙午")
-        self.assertEqual(s["流祿"], "巳")   # 丙干禄存在巳
+        self.assertEqual(s["流祿"], "巳")  # 丙干禄存在巳
         self.assertEqual(s["流羊"], "午")
         self.assertEqual(s["流陀"], "辰")
-        self.assertEqual(s["流馬"], "申")   # 寅午戌马在申
+        self.assertEqual(s["流馬"], "申")  # 寅午戌马在申
         self.assertEqual(s["流魁"], "亥")
         self.assertEqual(s["流鉞"], "酉")
 
@@ -116,6 +113,7 @@ class TestJsonAndBatch(unittest.TestCase):
             self.assertTrue(os.path.exists(os.path.join(d, "batch_summary.csv")))
         finally:
             import shutil
+
             shutil.rmtree(d, ignore_errors=True)
 
 

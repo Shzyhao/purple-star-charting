@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
 """宫干四化（飞星）：十二宫宫干各自起四化，看化禄权科忌飞入何宫。"""
-from .consts import GAN, GAN_IDX, ZHI_IDX, WUHU, SIHUA, PALACES, to_simp
+
+from .consts import GAN, GAN_IDX, PALACES, SIHUA, WUHU, ZHI_IDX, to_simp
 
 
 def palace_gans(ch):
@@ -33,16 +33,16 @@ def feixing(ch, sihua_table=None):
 
 def feixing_md(ch, sihua_table=None):
     fx = feixing(ch, sihua_table)
-    lines = ["## 宫干四化（飞星）", "",
-             "| 宫位 | 宫干 | 化禄→ | 化权→ | 化科→ | 化忌→ |", "|---|---|---|---|---|---|"]
+    lines = ["## 宫干四化（飞星）", "", "| 宫位 | 宫干 | 化禄→ | 化权→ | 化科→ | 化忌→ |", "|---|---|---|---|---|---|"]
     for pname in PALACES:
         d = fx[pname]
         cells = []
         for h in "祿權科忌":
             t = d["hua"].get(h)
             cells.append(("%s→%s" % (to_simp(t[0]), to_simp(t[1]))) if t else "—")
-        lines.append("| %s | %s | %s | %s | %s | %s |" % (
-            to_simp(pname), d["gan"], cells[0], cells[1], cells[2], cells[3]))
+        lines.append(
+            "| %s | %s | %s | %s | %s | %s |" % (to_simp(pname), d["gan"], cells[0], cells[1], cells[2], cells[3])
+        )
     lines.append("")
     lines.append("> 飞星派用法：看某宫宫干化忌飞入何宫，即该宫对此宫的影响；不同流派取用不同，此处仅列映射。")
     return "\n".join(lines)

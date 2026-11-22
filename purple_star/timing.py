@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
 """择时：按事件类型对流月流日打分（传统术数参考，不构成专业建议）。"""
-from .consts import PALACES, to_simp
-from . import liuyue, strength
+
+from . import liuyue
+from .consts import to_simp
 
 EVENTS = {
     "contract": {"name": "签约/合同", "palaces": ("官祿", "田宅")},
@@ -38,21 +38,38 @@ def score_day(ch, year, lunar_month, lunar_day, event):
                 score += 1.0
             elif h == "忌":
                 score -= 1.0
-    return {"day": lunar_day, "zhi": d["day_zhi"], "palace": base_palace,
-            "stars": stars, "score": score, "reasons": reasons}
+    return {
+        "day": lunar_day,
+        "zhi": d["day_zhi"],
+        "palace": base_palace,
+        "stars": stars,
+        "score": score,
+        "reasons": reasons,
+    }
 
 
 def timing_md(ch, year, lunar_month, event):
     ev = EVENTS[event]
     rows = [score_day(ch, year, lunar_month, d, event) for d in range(1, 31)]
     rows.sort(key=lambda r: (-r["score"], r["day"]))
-    out = ["## 择时参考：%s（%d 年农历 %d 月）" % (ev["name"], year, lunar_month), "",
-           "| 农历日 | 流日命宫 | 星曜 | 参考分 | 说明 |", "|---|---|---|---|---|"]
+    out = [
+        "## 择时参考：%s（%d 年农历 %d 月）" % (ev["name"], year, lunar_month),
+        "",
+        "| 农历日 | 流日命宫 | 星曜 | 参考分 | 说明 |",
+        "|---|---|---|---|---|",
+    ]
     for r in rows[:12]:
-        out.append("| %d | %s（%s） | %s | %s | %s |" % (
-            r["day"], to_simp(r["palace"]), r["zhi"],
-            "、".join(to_simp(s) for s in r["stars"]) or "空宫",
-            ("%+.1f" % r["score"]), "、".join(r["reasons"]) or "—"))
+        out.append(
+            "| %d | %s（%s） | %s | %s | %s |"
+            % (
+                r["day"],
+                to_simp(r["palace"]),
+                r["zhi"],
+                "、".join(to_simp(s) for s in r["stars"]) or "空宫",
+                ("%+.1f" % r["score"]),
+                "、".join(r["reasons"]) or "—",
+            )
+        )
     out.append("")
     out.append("> 仅为传统术数参考，不构成签约、医疗、出行等任何专业建议；重大事项请以现实条件为准。")
     return "\n".join(out)
