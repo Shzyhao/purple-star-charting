@@ -9,6 +9,9 @@ HUA_SCORE = {"祿": 2.0, "權": 1.0, "科": 0.8, "忌": -2.0}
 
 
 def _palace_of_zhi(ch, zhi):
+    mapping = ch.get("palace_by_zhi")
+    if mapping is not None:
+        return mapping.get(zhi)
     for p, v in ch["palaces"].items():
         if v["zhi"] == zhi:
             return p

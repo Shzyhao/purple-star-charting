@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.0
+
+### 质量与性能
+- 覆盖率门槛：50% -> 70%；新增 17 个测试（总测试数 76）
+- 新增本地覆盖率脚本 scripts/coverage_local.py（纯标准库）
+- 性能优化：排盘结果内置宫位索引、star_score LRU 缓存、字体缓存
+- 新增基准脚本 scripts/bench.py 与 docs/performance.md
+- lint 忽略项收敛（UP009/scripts E402），代码统一格式化
+
 ## 0.7.1
 
 ### 工程

@@ -1,6 +1,7 @@
 """命盘图：SVG 为主（无字体依赖），PNG 可选（需 Pillow 与中文字体）。"""
 
 import os
+from functools import lru_cache
 
 FONT_FAMILY = "Noto Sans CJK SC, Source Han Sans SC, Microsoft JhengHei, sans-serif"
 GRID = [
@@ -110,6 +111,7 @@ def draw_svg(ch, path, W=1100, H=1100):
     return path
 
 
+@lru_cache(maxsize=1)
 def _find_font():
     cands = [
         "C:/Windows/Fonts/NotoSansCJKsc-Regular.otf",

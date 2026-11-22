@@ -24,6 +24,7 @@
 - HTML 报告（--html）、繁体输出（--traditional，需 opencc）
 - PyPI 打包与命令行入口（purple-star）
 - DSH skill 安装脚本（scripts/install_skill.ps1 / .sh）
+- 性能基准与优化（见 docs/performance.md）
 - 专题：姻缘 / 事业 / 财运 / 健康（不涉寿命）
 - 合盘：双盘互看、四化互落、大限节奏、年龄差与相处建议
 - 流月 / 流日：按斗君起月，标注可靠性

@@ -42,6 +42,6 @@ jobs:
       - name: Coverage (fail under 50%)
         run: |
           coverage run -m unittest discover -s tests
-          coverage report -m --fail-under=50
+          coverage report -m --fail-under=70
       - name: Copyright scan (deep)
         run: python scripts/copyright_scan.py . --deep

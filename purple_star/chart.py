@@ -142,10 +142,9 @@ def chart(gender, year_gz, month, day, hour_idx, leap_month=False, late_zi="same
     for i, pname in enumerate(PALACES):
         pos = add(ming_z, -i)
         palaces[pname] = {"zhi": pos, "stars": sorted(stars[pos])}
-    shen_palace = None
-    for pname, info in palaces.items():
-        if info["zhi"] == shen_z:
-            shen_palace = pname
+    palace_by_zhi = {info["zhi"]: pname for pname, info in palaces.items()}
+    star_palace = {star: pname for pname, info in palaces.items() for star in info["stars"]}
+    shen_palace = palace_by_zhi.get(shen_z)
     yang_gan = g % 2 == 0
     male = gender == "男"
     forward = (yang_gan and male) or ((not yang_gan) and (not male))
@@ -193,6 +192,8 @@ def chart(gender, year_gz, month, day, hour_idx, leap_month=False, late_zi="same
         "ziwei": zw,
         "tianfu": tf,
         "palaces": palaces,
+        "palace_by_zhi": palace_by_zhi,
+        "star_palace": star_palace,
         "shen_palace": shen_palace,
         "hua": hua,
         "daxian": daxian,

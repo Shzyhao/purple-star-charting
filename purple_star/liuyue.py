@@ -31,7 +31,7 @@ def liuyue_table(ch, year):
                 if star in info["stars"]:
                     loc[h] = {"star": star, "palace": pname}
                     break
-        pname = [k for k, v in ch["palaces"].items() if v["zhi"] == z][0]
+        pname = ch.get("palace_by_zhi", {}).get(z) or [k for k, v in ch["palaces"].items() if v["zhi"] == z][0]
         rows.append(
             {"month": m, "palace": pname, "zhi": z, "gz": mgz, "stars": ch["palaces"][pname]["stars"], "hua": loc}
         )

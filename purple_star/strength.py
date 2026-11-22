@@ -7,6 +7,7 @@
 """
 
 import json
+from functools import lru_cache
 
 # 十四主星与常用辅星的五行（依据传统星曜五行，属事实性规则）
 STAR_ELEMENT = {
@@ -94,6 +95,7 @@ def relation(star_el, palace_el):
     return "比和"
 
 
+@lru_cache(maxsize=1024)
 def star_score(star, palace_zhi):
     """单星在某地支宫位的五行强弱分（多五行取平均）。"""
     els = STAR_ELEMENT.get(star)

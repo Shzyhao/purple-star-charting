@@ -21,6 +21,9 @@ def _hua_of(ch, star):
 
 
 def _palace_of(ch, star):
+    mapping = ch.get("star_palace")
+    if mapping is not None:
+        return mapping.get(star)
     for pname in PALACES:
         if star in _stars(ch, pname):
             return pname

@@ -21,6 +21,9 @@ MAIN_STARS = (
 
 
 def _palace_of_star(ch, star):
+    mapping = ch.get("star_palace")
+    if mapping is not None:
+        return mapping.get(star)
     for pname in PALACES:
         if star in ch["palaces"][pname]["stars"]:
             return pname
